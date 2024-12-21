@@ -191,7 +191,99 @@ def handle_message(data):
         'timestamp': message.timestamp.isoformat()
     }, room=data['receiver_id'])
 
+def create_sample_data():
+    # Create sample users with locations
+    sample_users = [
+        {
+            'email': 'john@example.com',
+            'name': 'John Smith',
+            'user_type': 'owner',
+            'bio': 'Dog lover with 2 golden retrievers',
+            'location': 'New York, NY',
+            'latitude': 40.7128,
+            'longitude': -74.0060
+        },
+        {
+            'email': 'sarah@example.com',
+            'name': 'Sarah Johnson',
+            'user_type': 'sitter',
+            'bio': 'Professional pet sitter with 5 years experience',
+            'location': 'Brooklyn, NY',
+            'latitude': 40.6782,
+            'longitude': -73.9442
+        },
+        {
+            'email': 'mike@example.com',
+            'name': 'Mike Wilson',
+            'user_type': 'owner',
+            'bio': 'Cat enthusiast looking for occasional pet sitting',
+            'location': 'Queens, NY',
+            'latitude': 40.7282,
+            'longitude': -73.7949
+        }
+    ]
+
+    # Add users
+    for user_data in sample_users:
+        if not User.query.filter_by(email=user_data['email']).first():
+            user = User(
+                email=user_data['email'],
+                name=user_data['name'],
+                user_type=user_data['user_type'],
+                bio=user_data['bio'],
+                location=user_data['location'],
+                latitude=user_data['latitude'],
+                longitude=user_data['longitude']
+            )
+            user.set_password('password123')
+            db.session.add(user)
+
+    # Create sample pets
+    sample_pets = [
+        {
+            'name': 'Max',
+            'species': 'dog',
+            'breed': 'Golden Retriever',
+            'age': 3,
+            'description': 'Friendly and energetic golden retriever who loves to play fetch',
+            'status': 'available',
+            'owner_email': 'john@example.com'
+        },
+        {
+            'name': 'Luna',
+            'species': 'cat',
+            'breed': 'Persian',
+            'age': 2,
+            'description': 'Sweet and calm Persian cat looking for a loving home',
+            'status': 'available',
+            'owner_email': 'mike@example.com'
+        }
+    ]
+
+    # Add pets
+    for pet_data in sample_pets:
+        owner = User.query.filter_by(email=pet_data['owner_email']).first()
+        if owner:
+            pet = Pet(
+                name=pet_data['name'],
+                species=pet_data['species'],
+                breed=pet_data['breed'],
+                age=pet_data['age'],
+                description=pet_data['description'],
+                status=pet_data['status'],
+                owner_id=owner.id
+            )
+            db.session.add(pet)
+
+    try:
+        db.session.commit()
+        print("Sample data created successfully!")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creating sample data: {e}")
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        create_sample_data()
     socketio.run(app, debug=True)
