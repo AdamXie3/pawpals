@@ -133,8 +133,9 @@ def pets():
 
 @app.route('/map')
 def map():
-    users = User.query.all()
-    return render_template('map.html', users=users)
+    # Get all users with location data
+    users = User.query.filter(User.latitude.isnot(None), User.longitude.isnot(None)).all()
+    return render_template('map.html', users=users, google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
 
 @app.route('/chat/<int:user_id>')
 @login_required
