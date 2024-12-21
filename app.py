@@ -146,6 +146,33 @@ def chat(user_id):
     ).order_by(Message.timestamp.asc()).all()
     return render_template('chat.html', other_user=other_user, messages=messages)
 
+@app.route('/add_pet', methods=['GET', 'POST'])
+@login_required
+def add_pet():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        species = request.form.get('species')
+        breed = request.form.get('breed')
+        age = request.form.get('age')
+        description = request.form.get('description')
+        status = request.form.get('status', 'available')
+
+        pet = Pet(
+            name=name,
+            species=species,
+            breed=breed,
+            age=age,
+            description=description,
+            status=status,
+            owner_id=current_user.id
+        )
+        db.session.add(pet)
+        db.session.commit()
+        flash('Pet added successfully!', 'success')
+        return redirect(url_for('pets'))
+
+    return render_template('add_pet.html')
+
 # SocketIO events
 @socketio.on('send_message')
 def handle_message(data):
