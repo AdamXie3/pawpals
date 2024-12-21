@@ -1,39 +1,12 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <style>
     #map {
         height: 600px;
         width: 100%;
         border-radius: 0.5rem;
-    }
-    .user-info-window {
-        padding: 10px;
-        max-width: 200px;
-    }
-    .user-info-window h3 {
-        margin: 0 0 5px 0;
-        color: #2C3E50;
-        font-weight: bold;
-    }
-    .user-info-window p {
-        margin: 5px 0;
-        color: #666;
-    }
-    .user-type-badge {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 12px;
-        margin-bottom: 8px;
-    }
-    .user-type-owner {
-        background-color: #E3F2FD;
-        color: #1976D2;
-    }
-    .user-type-sitter {
-        background-color: #F3E5F5;
-        color: #9C27B0;
     }
 </style>
 {% endblock %}
@@ -41,7 +14,6 @@
 {% block content %}
 <div class="max-w-6xl mx-auto">
     <h2 class="text-2xl font-bold mb-6">Community Map</h2>
-    
     <div class="bg-white rounded-lg shadow-lg p-6">
         <div id="map"></div>
     </div>
@@ -49,54 +21,18 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-function initMap() {
-    // Create the map centered on New York
-    const map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 11,
-        center: { lat: 40.7128, lng: -74.0060 }
-    });
+    const map = L.map('map').setView([40.7128, -74.0060], 11); // Center on New York
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    }).addTo(map);
 
     // Add markers for each user
     {% for user in users %}
-    (function() {
-        const marker = new google.maps.Marker({
-            position: { lat: {{ user.latitude }}, lng: {{ user.longitude }} },
-            map: map,
-            title: "{{ user.name }}",
-            icon: {
-                url: "{{ url_for('static', filename='img/' ~ (user.user_type == 'owner' ? 'paw.png' : 'house.png')) }}",
-                scaledSize: new google.maps.Size(32, 32)
-            }
-        });
-
-        const contentString = `
-            <div class="user-info-window">
-                <h3>${marker.title}</h3>
-                <span class="user-type-badge user-type-{{ user.user_type }}">
-                    {{ user.user_type|title }}
-                </span>
-                <p>{{ user.bio }}</p>
-                <p>{{ user.location }}</p>
-                {% if current_user.is_authenticated %}
-                <a href="{{ url_for('chat', user_id=user.id) }}" 
-                   class="text-blue-600 hover:text-blue-800">
-                    Send Message
-                </a>
-                {% endif %}
-            </div>
-        `;
-
-        const infowindow = new google.maps.InfoWindow({
-            content: contentString
-        });
-
-        marker.addListener('click', () => {
-            infowindow.open(map, marker);
-        });
-    })();
+    L.marker([{{ user.latitude }}, {{ user.longitude }}]).addTo(map)
+        .bindPopup('<strong>{{ user.name }}</strong><br>{{ user.bio }}<br>{{ user.location }}');
     {% endfor %}
-}
 </script>
 {% endblock %}
