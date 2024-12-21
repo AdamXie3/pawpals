@@ -1,0 +1,84 @@
+:root {
+    --primary: #FF6B6B;
+    --primary-dark: #FF5252;
+    --secondary: #4ECDC4;
+    --accent: #FFE66D;
+    --dark: #2C3E50;
+    --light: #F7F9FC;
+    --gray: #95A5A6;
+}
+
+.btn-primary {
+    @apply bg-[#FF6B6B] text-white px-6 py-3 rounded-lg hover:bg-[#FF5252] transition-colors duration-200;
+}
+
+.btn-secondary {
+    @apply bg-[#4ECDC4] text-white px-6 py-3 rounded-lg hover:bg-[#45B7AE] transition-colors duration-200;
+}
+
+.card {
+    @apply bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-200 hover:transform hover:scale-[1.02];
+}
+
+.input-field {
+    @apply mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-[#FF6B6B] focus:ring-[#FF6B6B];
+}
+
+.nav-link {
+    @apply text-gray-700 hover:text-[#FF6B6B] transition-colors duration-200;
+}
+
+.section-title {
+    @apply text-3xl font-bold text-[#2C3E50] mb-6;
+}
+
+/* Custom animations */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.float-animation {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Pet card styles */
+.pet-card {
+    @apply relative overflow-hidden rounded-xl shadow-lg transition-all duration-300;
+}
+
+.pet-card:hover {
+    @apply transform scale-[1.02] shadow-xl;
+}
+
+.pet-card-image {
+    @apply w-full h-48 object-cover transition-transform duration-300;
+}
+
+.pet-card:hover .pet-card-image {
+    @apply transform scale-110;
+}
+
+/* Chat styles */
+.chat-bubble {
+    @apply max-w-[70%] rounded-2xl px-4 py-2 mb-2;
+}
+
+.chat-bubble-sent {
+    @apply bg-[#FF6B6B] text-white ml-auto;
+}
+
+.chat-bubble-received {
+    @apply bg-gray-100 text-gray-800;
+}
+
+/* Map styles */
+.map-container {
+    @apply rounded-xl overflow-hidden shadow-lg;
+    height: 600px;
+}
+
+.map-marker {
+    @apply bg-[#FF6B6B] text-white rounded-full p-2;
+}

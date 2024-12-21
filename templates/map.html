@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    #map {
+        height: 600px;
+        width: 100%;
+        border-radius: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6">Community Map</h2>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div id="map"></div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
+<script>
+function initMap() {
+    const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: { lat: {{ current_user.latitude or 25.2048 }}, lng: {{ current_user.longitude or 55.2708 }} }
+    });
+
+    const users = {{ users|tojson|safe }};
+    users.forEach(user => {
+        if (user.latitude && user.longitude) {
+            const marker = new google.maps.Marker({
+                position: { lat: user.latitude, lng: user.longitude },
+                map: map,
+                title: user.name,
+                icon: user.user_type === 'owner' ? 'static/img/paw-marker.png' : 'static/img/home-marker.png'
+            });
+
+            const infoWindow = new google.maps.InfoWindow({
+                content: `
+                    <div class="p-2">
+                        <h3 class="font-bold">${user.name}</h3>
+                        <p class="text-gray-600">${user.user_type === 'owner' ? 'Pet Owner' : 'Pet Sitter'}</p>
+                        ${user.user_type === 'owner' && user.pets.length ? `
+                            <p class="mt-2">Pets: ${user.pets.map(pet => pet.name).join(', ')}</p>
+                        ` : ''}
+                        <a href="/chat/${user.id}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                            Send Message
+                        </a>
+                    </div>
+                `
+            });
+
+            marker.addListener('click', () => {
+                infoWindow.open(map, marker);
+            });
+        }
+    });
+}
+</script>
+{% endblock %}
+{% endblock %}

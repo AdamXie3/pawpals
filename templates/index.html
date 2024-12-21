@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center py-12">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome to PawPals</h1>
+    <p class="text-xl text-gray-600 mb-8">Connect with pet lovers in your community</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <i class="fas fa-heart text-4xl text-pink-500 mb-4"></i>
+            <h2 class="text-2xl font-bold mb-2">Adopt a Pet</h2>
+            <p class="text-gray-600">Find your perfect companion from loving homes in your community.</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <i class="fas fa-house-user text-4xl text-blue-500 mb-4"></i>
+            <h2 class="text-2xl font-bold mb-2">Pet Sitting</h2>
+            <p class="text-gray-600">Offer or find reliable pet sitting services in your neighborhood.</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <i class="fas fa-comments text-4xl text-green-500 mb-4"></i>
+            <h2 class="text-2xl font-bold mb-2">Community Chat</h2>
+            <p class="text-gray-600">Connect with other pet lovers and share your experiences.</p>
+        </div>
+    </div>
+
+    {% if not current_user.is_authenticated %}
+    <div class="mt-12">
+        <a href="{{ url_for('register') }}" class="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 mr-4">
+            Join PawPals
+        </a>
+        <a href="{{ url_for('login') }}" class="bg-gray-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-700">
+            Login
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
